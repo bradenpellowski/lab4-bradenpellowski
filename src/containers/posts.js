@@ -14,6 +14,8 @@ class Posts extends Component {
   }
 
   render() {
+    console.log('here');
+    console.log(this.props.all);
     return (
       <div id="case">
         {this.props.all.map((post) => {
