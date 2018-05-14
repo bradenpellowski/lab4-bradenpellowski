@@ -17,13 +17,26 @@ import Post from './containers/post';
 import Posts from './containers/posts';
 import NewPost from './containers/newPost';
 
+import { ActionTypes } from './actions';
+
+import SignIn from './containers/SignIn';
+import SignUp from './containers/SignUp';
+
+import RequireAuth from './containers/requireAuth';
+
 import './style.scss';
 // import App from './components/app';
+
 
 const store = createStore(reducers, {}, compose(
   applyMiddleware(thunk),
   window.devToolsExtension ? window.devToolsExtension() : f => f,
 ));
+
+const token = localStorage.getItem('token');
+if (token) {
+  store.dispatch({ type: ActionTypes.AUTH_USER });
+}
 
 //
 // const Nav = (props) => {
@@ -44,8 +57,11 @@ const App = (props) => {
         <Navbar />
         <Switch>
           <Route exact path="/" component={Posts} />
-          <Route path="/posts/new" component={NewPost} />
+          <Route path="/new" component={RequireAuth(NewPost)} />
           <Route path="/posts/:postID" component={Post} />
+          <Route path="/signin" component={SignIn} />
+          <Route path="/signup" component={SignUp} />
+
           <Route render={() => (<div>post not found </div>)} />
         </Switch>
       </div>

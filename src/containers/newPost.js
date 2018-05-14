@@ -40,7 +40,7 @@ class NewPost extends Component {
         Content:<textarea className="textarea" onChange={event => this.setState({ content: event.target.value })} />
         </div>
         Cover URL:<input type="text" onChange={event => this.setState({ cover_url: event.target.value })} />
-        <div>
+        <div className="createButton">
           <input type="submit" value="create" onClick={this.create} />
         </div>
       </div>

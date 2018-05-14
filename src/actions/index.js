@@ -12,8 +12,17 @@ const API_KEY = '?key=b_pellowski';
 export const ActionTypes = {
   FETCH_POSTS: 'FETCH_POSTS',
   FETCH_POST: 'FETCH_POST',
+  AUTH_USER: 'AUTH_USER',
+  DEAUTH_USER: 'DEAUTH_USER',
+  AUTH_ERROR: 'AUTH_ERROR',
 };
 
+export function authError(error) {
+  return {
+    type: ActionTypes.AUTH_ERROR,
+    message: error,
+  };
+}
 // const fields = {title: '', contents:'', tags: ''}
 
 export function createPost(post, history) {
@@ -21,10 +30,13 @@ export function createPost(post, history) {
   // that gets called by the middleware passing in dispatch to it as an argument
   return (dispatch) => {
     // const fields = { title: '', contents: '', tags: '' };
-    axios.post(`${ROOT_URL}/posts${API_KEY}`, post).then((response) => {
+    // axios.post(`${ROOT_URL}/posts`, post, { headers: { authorization: localStorage.getItem('token') } })
+
+    axios.post(`${ROOT_URL}/posts${API_KEY}`, post, { headers: { authorization: localStorage.getItem('token') } }).then((response) => {
       history.push('/');
       // dispatch({ type: 'FETCH_POSTS', payload: response.data });
     }).catch((error) => {
+      console.log('error making post');
       console.log(error);
       // hit an error do something else!
     });
@@ -60,6 +72,7 @@ export function fetchPost(id) {
       // console.log(response.data);
       dispatch({ type: ActionTypes.FETCH_POST, payload: response.data });
     }).catch((error) => {
+      console.log('IN HERE fetch');
       console.log(error);
     });
   };
@@ -67,7 +80,7 @@ export function fetchPost(id) {
 
 export function deletePost(id, history) {
   return (dispatch) => {
-    axios.delete(`${ROOT_URL}/posts/${id}${API_KEY}`).then((response) => {
+    axios.delete(`${ROOT_URL}/posts/${id}${API_KEY}`, { headers: { authorization: localStorage.getItem('token') } }).then((response) => {
       history.push('/');
     }).catch((error) => {
       console.log(error);
@@ -77,10 +90,65 @@ export function deletePost(id, history) {
 
 export function updatePost(post) {
   return (dispatch) => {
-    axios.put(`${ROOT_URL}/posts/${post.id}${API_KEY}`, post).then((response) => {
+    axios.put(`${ROOT_URL}/posts/${post.id}${API_KEY}`, post, { headers: { authorization: localStorage.getItem('token') } }).then((response) => {
       dispatch({ type: ActionTypes.FETCH_POST, payload: response.data });
     }).catch((error) => {
       console.log(error);
     });
   };
 }
+
+export function signinUser({ email, password }, history) {
+  // takes in an object with email and password (minimal user object)
+  // returns a thunk method that takes dispatch as an argument (just like our create post method really)
+  // does an axios.post on the /signin endpoint
+  // on success does:
+  //  dispatch({ type: ActionTypes.AUTH_USER });
+  //  localStorage.setItem('token', response.data.token);
+  // on error should dispatch(authError(`Sign In Failed: ${error.response.data}`));
+  return (dispatch) => {
+    axios.post(`${ROOT_URL}/signin`, { email, password }, history)
+      .then((response) => {
+        dispatch({ type: ActionTypes.AUTH_USER });
+        localStorage.setItem('token', response.data.token);
+        history.push('/');
+      })
+      .catch((err) => {
+        console.log('asff');
+        dispatch(authError(`Sign In Failed: ${err.response.data}`));
+      });
+  };
+}
+
+
+export function signupUser({ email, password, username }, history) {
+  // takes in an object with email and password (minimal user object)
+  // returns a thunk method that takes dispatch as an argument (just like our create post method really)
+  // does an axios.post on the /signup endpoint (only difference from above)
+  // on success does:
+  //  dispatch({ type: ActionTypes.AUTH_USER });
+  //  localStorage.setItem('token', response.data.token);
+  // on error should dispatch(authError(`Sign Up Failed: ${error.response.data}`));
+  return (dispatch) => {
+    axios.post(`${ROOT_URL}/signup`, { email, password, username }).then((response) => {
+      dispatch({ type: ActionTypes.AUTH_USER });
+      localStorage.setItem('token', response.data.token);
+    }).catch((error) => {
+      dispatch(authError(`Sign Up Failed: ${error.response.data}`));
+    });
+  };
+}
+
+
+// deletes token from localstorage
+// and deauths
+export function signoutUser(history) {
+  return (dispatch) => {
+    localStorage.removeItem('token');
+    dispatch({ type: ActionTypes.DEAUTH_USER });
+    history.push('/');
+  };
+}
+
+// trigger to deauth if there is error
+// can also use in your error reducer if you have one to display an error message
