@@ -2,7 +2,8 @@ import axios from 'axios';
 
 // const ROOT_URL = 'https://cs52-blog.herokuapp.com/api';
 // const ROOT_URL = 'http://localhost:9090/api';
-const ROOT_URL = 'https://agile-beach-30317.herokuapp.com/api';
+// const ROOT_URL = 'https://agile-beach-30317.herokuapp.com/api';
+const ROOT_URL = 'https://lab5-p2.herokuapp.com/api';
 
 
 const API_KEY = '?key=b_pellowski';
