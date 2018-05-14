@@ -25,7 +25,6 @@ class Posts extends Component {
             <div key={post.id} id="container">
               <p className="header">{post.title}</p>
               <p className="header2">{post.tags}</p>
-
               <img alt=""src={post.cover_url} width="300px" height="300px" />
             </div>
           </NavLink>

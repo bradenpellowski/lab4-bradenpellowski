@@ -14,6 +14,7 @@ class Post extends Component {
       tags: '',
       cover_url: '',
       editing: false,
+      author: '',
     };
     this.maketitle = this.maketitle.bind(this);
     this.updatetext = this.updatetext.bind(this);
@@ -84,11 +85,19 @@ class Post extends Component {
       return (
         <div>Title:
           <input onChange={this.updatetitle} value={this.state.title} placeholder={this.props.post.title} />
+
         </div>
       );
     } else {
-    // return <input type="text" onChange={this.updatetitle} value={this.props.note.title} placeholder="Name your note" required />;
-      return <div >{this.props.post.title}</div>;
+      // console.log('this.props.post.author:');
+      console.log(this.props.post.author);
+      if (this.props.post.author) {
+        return <div > {this.props.post.title}<div> {this.state.author} Author: {this.props.post.author.username}</div></div>;
+      } else {
+        return <div >{this.props.post.title} </div>;
+      }
+
+      // return <input type="text" onChange={this.updatetitle} value={this.props.note.title} placeholder="Name your note" required />;
     }
   }
 
@@ -135,6 +144,7 @@ class Post extends Component {
     return (
       <div className="note2">
         <div className="header">
+
           {this.maketitle()}
 
           <div className="hright">

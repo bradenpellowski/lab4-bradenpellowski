@@ -16,7 +16,7 @@ class Navbar extends Component {
           </div>
           <div className="header2">
             <NavLink padding="20px" to="/new"><input type="button" value="New Post" /></NavLink>
-            <button onClick={() => { this.props.signoutUser(this.props.history); }} />
+            Logout: <button value="logout" onClick={() => { this.props.signoutUser(this.props.history); }} />
           </div>
         </nav>
 
